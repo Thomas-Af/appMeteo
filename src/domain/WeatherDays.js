@@ -19,22 +19,40 @@ export default function WheatherDays() {
     data.city && setName(data.city.name)
   }, [data]);
   
-  // console.log('data', data.city.name)
   return (
     <View >
-      <Text>WeatherDays Pages</Text>
-      <Text>Weather for {name}</Text>
+      <Text style={styles.title}>Info météo sur {name} pour les 14 prochains jours</Text>
       <FlatList
           data={data.forecast}
-          keyExtractor={({ datetime }, index) => datetime}
+          keyExtractor={({ dirwind10m }, index) => dirwind10m}
           renderItem={({ item }) => (
-            <Text>Temp mini : {item.tmin}°, Temp max : {item.tmax}°</Text>
+            <View style={styles.block}>
+              <Text style={styles.title}>Prévisions du jour {item.day} : </Text>
+              <Text>Température minimale / maximale : {item.tmin}° / {item.tmax}°</Text>
+              <Text>Vent moyen : {item.wind10m} km/h</Text>
+              <Text>Cumul de pluie sur la journée : {item.rr10} mm</Text>
+              <Text>Probabilité de pluie : {item.probarain}%</Text>
+              <Text>Temps d'ensoleillement : {item.sun_hours} h</Text>
+            </View>
           )}
         />
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  
+  block: {
+    backgroundColor: '#EDF6FD',
+    margin: 20,
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 40
+  },
+  title: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    paddingBottom: 10,
+    paddingTop: 10
+  }
 });
