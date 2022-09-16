@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import moment from 'moment';
+
 import fetchData from '../services/fetchData'
 
-export default function WheatherDays() {
-  const [isLoading, setLoading] = useState(true);
+export default function WheatherDays({route}) {
   const [data, setData] = useState({});
   const [name, setName] = useState("");
 
+  // const route = useRoute();
+  console.log("route", route)
+
   useEffect(() => {
-    fetchData('forecast/daily', 33063)
+    fetchData('forecast/nextHours', route.params.cp)
     .then(response => {
       setData(response);
     });
@@ -21,22 +26,21 @@ export default function WheatherDays() {
   
   return (
     <View >
-      <Text style={styles.title}>Info météo sur {name} pour les 14 prochains jours</Text>
+      <Text style={styles.title}>Info météo sur  pour les prochaines heures {route.params.info.name}</Text>
       <FlatList
           data={data.forecast}
-          keyExtractor={({ dirwind10m }, index) => dirwind10m}
+          keyExtractor={({ datetime }, index) => datetime}
           renderItem={({ item }) => (
             <View style={styles.block}>
-              <Text style={styles.title}>Prévisions du jour {item.day} : </Text>
-              <Text>Température minimale / maximale : {item.tmin}° / {item.tmax}°</Text>
+              <Text style={styles.title}>Météo a partir de : {moment(item.datetime).format('h:mm:ss a')} </Text>
+              <Text>Pourcentage d'humidité : {item.rh2m} %</Text>
+              <Text>Température : {item.temp2m} °</Text>
               <Text>Vent moyen : {item.wind10m} km/h</Text>
-              <Text>Cumul de pluie sur la journée : {item.rr10} mm</Text>
-              <Text>Probabilité de pluie : {item.probarain}%</Text>
-              <Text>Temps d'ensoleillement : {item.sun_hours} h</Text>
+              <Text>Cumul de pluie : {item.rr10} mm</Text>
+              <Text>Probabilité de pluie : {item.probarain} %</Text>
             </View>
           )}
         />
-
     </View>
   );
 }
