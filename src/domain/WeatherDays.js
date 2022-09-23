@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, FlatList } from 'react-native';
-import fetchData from '../services/fetchData'
+import { StyleSheet, Text, View, FlatList, Image } from 'react-native';
+import fetchData from '../services/fetchData';
+import renderImg from '../services/renderImg';
+import dayjs from 'dayjs'
 
-export default function WheatherDays() {
-  const [isLoading, setLoading] = useState(true);
+
+export default function WeatherDays() {
   const [data, setData] = useState({});
   const [name, setName] = useState("");
 
+  
   useEffect(() => {
     fetchData('forecast/daily', 33063)
     .then(response => {
@@ -15,44 +18,81 @@ export default function WheatherDays() {
   }, []);
 
   useEffect(() => {
-    console.log(data)
     data.city && setName(data.city.name)
   }, [data]);
   
+  
   return (
     <View >
-      <Text style={styles.title}>Info météo sur {name} pour les 14 prochains jours</Text>
+      <Text style={styles.firstTitle}>Info météo sur {name} pour les 14 prochains jours</Text>
       <FlatList
           data={data.forecast}
           keyExtractor={({ dirwind10m }, index) => dirwind10m}
-          renderItem={({ item }) => (
-            <View style={styles.block}>
-              <Text style={styles.title}>Prévisions du jour {item.day} : </Text>
-              <Text>Température minimale / maximale : {item.tmin}° / {item.tmax}°</Text>
-              <Text>Vent moyen : {item.wind10m} km/h</Text>
-              <Text>Cumul de pluie sur la journée : {item.rr10} mm</Text>
-              <Text>Probabilité de pluie : {item.probarain}%</Text>
-              <Text>Temps d'ensoleillement : {item.sun_hours} h</Text>
+          renderItem={({ item }) => {
+            return (
+              <View style={styles.block}>
+              <Text style={styles.title}>Prévisions du {dayjs(item.datetime.substring(0,10)).format('DD/MM/YYYY')} : </Text>
+              <View style={styles.content}>
+              { renderImg(item.weather) }
+              <View>
+                <View style={styles.info}>
+                  <Image
+                    source={require('../../assets/icon/wi-thermometer.png')}
+                    style={styles.littleIcon}
+                  />
+                  <Text>{item.tmin}° / {item.tmax}°</Text>
+                </View>
+                <View style={styles.info}>
+                  <Image
+                    source={require('../../assets/icon/wi-humidity.png')}
+                    style={styles.littleIcon}
+                  />
+                  <Text>{item.probarain}%</Text>
+                </View>
+              </View>
+              </View>              
             </View>
-          )}
+          )}}
         />
-
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   block: {
-    backgroundColor: '#EDF6FD',
+    backgroundColor: '#FBD87F',
     margin: 20,
     padding: 15,
     borderRadius: 10,
-    marginBottom: 40
+    marginBottom: 40,
+  },
+  content: {
+    flexDirection: "row",
+    justifyContent: 'space-between'
+  },
+  info: {
+    flexDirection: "row",
+    alignItems: 'center',
   },
   title: {
+    textAlign: 'left',
+    fontWeight: 'bold',
+    paddingBottom: 15,
+    paddingTop: 10
+  },
+  firstTitle: {
     textAlign: 'center',
     fontWeight: 'bold',
     paddingBottom: 10,
     paddingTop: 10
+  },
+  icon: {
+    width: '20%',
+    height: '100%',
+  },
+  littleIcon: {
+    width: '10%',
+    height: '90%',
+    marginRight: 5
   }
 });

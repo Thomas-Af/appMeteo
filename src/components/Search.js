@@ -5,17 +5,11 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import searchDataCities from '../services/searchCities';
 
-import WeatherCity from '../domain/WeatherCity'
-
 
 export default function Search({ navigation }) {
   const [data, setData] = useState({});
-  const [insee, setInsee] = useState('');
-  const [name, setName] = useState('');
-  // const [newItem, setNewItem] = useState({});
 
   function goToWeatherCity(item) {
-    // console.log("newItem", newItem);
     item && navigation.navigate('WeatherCity', {
       info: {
         insee: item.insee,
@@ -29,7 +23,6 @@ export default function Search({ navigation }) {
       <TextInput
         style={styles.input}
         placeholder="Rechercher une ville"
-        // onSubmitEditing={(text) => searchDataCities(text)}
         onChangeText={async (text) => {
           const rawData = await searchDataCities(text);
           setData(rawData);
@@ -41,7 +34,6 @@ export default function Search({ navigation }) {
           renderItem={({ item }) => (
             <View style={styles.card}>
               <Text onPress={() => goToWeatherCity(item)}>{item.name}</Text>
-              <Text>{item.insee}</Text>
               <Text >{item.cp}</Text>
             </View>
           )}

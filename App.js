@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button, Image } from 'react-native';
+import { StyleSheet, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
